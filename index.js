@@ -6,6 +6,14 @@ let parser = new Parser();
 //Definition du dossier statique pour servir les fichiers html statiques
 app.use(express.static('client'));
 
+app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Methods", "GET");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-access-token");
+    res.header("Access-Control-Allow-Credentials", true);
+    next();
+ });
+
 //Definition de la route rss pour récupérer le flux
 app.get('/rss', (req, res) => {
     //Récupération de l'url du flux ou utilisation de l'url par defaut
@@ -26,10 +34,13 @@ app.get('/rss', (req, res) => {
             feed.items = feed.items.slice(skip);
         }
         //Renvoi du résultat
+        console.log('retour du résultat');
         res.send(feed);
     });
 });
 
+
+//Démarrage du serveur sur le port définie dans les variables d'environnement ou sur 8080
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}...`);
